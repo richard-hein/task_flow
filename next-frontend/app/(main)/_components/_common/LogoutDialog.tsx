@@ -53,7 +53,7 @@ const LogoutDialog = (props: {
             <Button
               disabled={isPending}
               type="button"
-              className="!text-white"
+              className="text-white!"
               onClick={handleLogout}
             >
               {isPending && <Loader className="animate-spin" />}

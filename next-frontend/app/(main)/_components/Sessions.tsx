@@ -44,13 +44,13 @@ const Sessions = () => {
   }, []);
 
   return (
-    <div className="via-root to-root rounded-xl bg-gradient-to-r p-0.5">
+    <div className="via-root to-root rounded-xl bg-linear-to-r p-0.5">
       <div className="rounded-[10px] p-6">
         <h3 className="text-xl tracking-[-0.16px] text-slate-12 font-bold mb-1">
           Sessions
         </h3>
         <p className="mb-6 max-w-xl text-sm text-[#0007149f] dark:text-gray-100 font-normal">
-          Sessions are the devices you are using or that have used your Squeezy
+          Sessions are the devices you are using or that have used your Taskflow
           These are the sessions where your account is currently logged in. You
           can log out of each session.
         </p>
@@ -63,7 +63,7 @@ const Sessions = () => {
                 Current active session
               </h5>
               <p className="mb-6 text-sm text-[#0007149f] dark:text-gray-100">
-                You’re logged into this Squeezy account on this device and are
+                You’re logged into this Taskflow account on this device and are
                 currently using it.
               </p>
             </div>
@@ -86,7 +86,7 @@ const Sessions = () => {
                 "
                 >
                   {otherSessions?.map((session) => (
-                    <li>
+                    <li key={session._id}>
                       <SessionItem
                         loading={isPending}
                         userAgent={session.userAgent}

@@ -68,10 +68,10 @@ export default function Login() {
         <Logo />
 
         <h1 className="text-xl tracking-[-0.16px] dark:text-[#fcfdffef] font-bold mb-1.5 mt-8 text-center sm:text-left">
-          Log in to Squeezy
+          Log in to Taskflow
         </h1>
         <p className="mb-8 text-center sm:text-left text-base dark:text-[#f1f7feb5] font-normal">
-          Don't have an account?{" "}
+          Don&apos;t have an account?{" "}
           <Link className="text-primary" href="/signup">
             Sign up
           </Link>

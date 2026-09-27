@@ -48,7 +48,7 @@ export default function ForgotPassword() {
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     mutate(values, {
-      onSuccess: (response: any) => {
+      onSuccess: () => {
         setIsSubmitted(true);
       },
       onError: (error) => {

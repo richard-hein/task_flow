@@ -1,6 +1,7 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
 import { z } from "zod";
@@ -27,7 +28,7 @@ export default function ResetPassword() {
   const params = useSearchParams();
   const code = params.get("code");
   const exp = Number(params.get("exp"));
-  const now = Date.now();
+  const [now] = useState(() => Date.now());
 
   const isValid = code && exp && exp > now;
 

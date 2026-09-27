@@ -1,4 +1,4 @@
-import UAParser from "ua-parser-js";
+import { UAParser } from "ua-parser-js";
 import { format, formatDistanceToNowStrict, isPast } from "date-fns";
 import { Laptop, LucideIcon, Smartphone } from "lucide-react";
 

@@ -11,16 +11,16 @@ const RevokeMfa = () => {
 
   const { mutate, isPending } = useMutation({
     mutationFn: revokeMFAMutationFn,
-    onSuccess: (response: any) => {
+    onSuccess: (response) => {
       queryClient.invalidateQueries({
         queryKey: ["authUser"],
       });
       toast({
         title: "Success",
-        description: response.message,
+        description: response.data.message,
       });
     },
-    onError: (error: any) => {
+    onError: (error) => {
       toast({
         title: "Error",
         description: error.message,
@@ -36,7 +36,7 @@ const RevokeMfa = () => {
   return (
     <Button
       disabled={isPending}
-      className="h-[35px] !text-[#c40006d3] !bg-red-100 shadow-none mr-1"
+      className="h-[35px] text-[#c40006d3]! bg-red-100! shadow-none mr-1"
       onClick={handleClick}
     >
       {isPending && <Loader className="animate-spin" />}

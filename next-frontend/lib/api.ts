@@ -78,3 +78,75 @@ export const sessionsQueryFn = async () => {
 
 export const sessionDelMutationFn = async (id: string) =>
   await API.delete(`/session/${id}`);
+
+// ponytail: SaaS v1 contract mirrors backend/FEATURES.md B-E; backend not coded yet
+export type OrgType = { _id: string; name: string; ownerId: string };
+export type ProjectType = { _id: string; orgId: string; name: string; archived: boolean };
+export type TaskStatus = "todo" | "doing" | "done";
+export type TaskType = {
+  _id: string;
+  projectId: string;
+  orgId: string;
+  title: string;
+  desc?: string;
+  status: TaskStatus;
+  priority: "low" | "med" | "high";
+  assigneeId?: string;
+  order: number;
+};
+export type MemberType = { userId: string; email?: string; role: "admin" | "member" };
+export type CommentType = { _id: string; taskId: string; authorId: string; body: string };
+
+export const orgsQueryFn = async () => {
+  const res = await API.get<{ orgs: OrgType[] }>(`/orgs`);
+  return res.data;
+};
+export const createOrgMutationFn = async (data: { name: string }) =>
+  await API.post(`/orgs`, data);
+
+export const membersQueryFn = async (orgId: string) => {
+  const res = await API.get<{ members: MemberType[] }>(`/orgs/${orgId}/members`);
+  return res.data;
+};
+export const inviteMemberMutationFn = async (orgId: string, data: { email: string }) =>
+  await API.post(`/orgs/${orgId}/invite`, data);
+export const updateMemberRoleMutationFn = async (
+  orgId: string,
+  userId: string,
+  data: { role: "admin" | "member" }
+) => await API.put(`/orgs/${orgId}/members/${userId}`, data);
+export const removeMemberMutationFn = async (orgId: string, userId: string) =>
+  await API.delete(`/orgs/${orgId}/members/${userId}`);
+export const acceptInviteMutationFn = async (data: { code: string }) =>
+  await API.post(`/invites/accept`, data);
+
+export const projectsQueryFn = async (orgId: string) => {
+  const res = await API.get<{ projects: ProjectType[] }>(`/orgs/${orgId}/projects`);
+  return res.data;
+};
+export const createProjectMutationFn = async (orgId: string, data: { name: string }) =>
+  await API.post(`/orgs/${orgId}/projects`, data);
+
+export const tasksQueryFn = async (projectId: string, status?: TaskStatus) => {
+  const res = await API.get<{ tasks: TaskType[] }>(`/projects/${projectId}/tasks`, {
+    params: { status, limit: 50 },
+  });
+  return res.data;
+};
+export const createTaskMutationFn = async (
+  projectId: string,
+  data: { title: string; desc?: string }
+) => await API.post(`/projects/${projectId}/tasks`, data);
+export const moveTaskMutationFn = async (
+  taskId: string,
+  data: { status: TaskStatus; order?: number }
+) => await API.put(`/tasks/${taskId}/move`, data);
+export const deleteTaskMutationFn = async (taskId: string) =>
+  await API.delete(`/tasks/${taskId}`);
+
+export const commentsQueryFn = async (taskId: string) => {
+  const res = await API.get<{ comments: CommentType[] }>(`/tasks/${taskId}/comments`);
+  return res.data;
+};
+export const createCommentMutationFn = async (taskId: string, data: { body: string }) =>
+  await API.post(`/tasks/${taskId}/comments`, data);

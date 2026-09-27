@@ -81,7 +81,7 @@ export default function SignUp() {
             <Logo />
 
             <h1 className="text-xl tracking-[-0.16px] dark:text-[#fcfdffef] font-bold mb-1.5 mt-8 text-center sm:text-left">
-              Create a Squeezy account
+              Create a Taskflow account
             </h1>
             <p className="mb-6 text-center sm:text-left text-base dark:text-[#f1f7feb5] font-normal">
               Already have an account?{" "}
@@ -174,7 +174,7 @@ export default function SignUp() {
                   />
                 </div>
                 <Button
-                  className="w-full text-[15px] h-[40px] !bg-blue-500 text-white font-semibold"
+                  className="w-full text-[15px] h-[40px] bg-blue-500! text-white font-semibold"
                   disabled={isPending}
                   type="submit"
                 >

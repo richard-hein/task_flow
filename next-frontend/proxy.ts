@@ -1,18 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const protectedRoutes = ["/home", "/sessions"];
+const protectedPrefixes = ["/home", "/sessions", "/orgs", "/org"];
 const publicRoutes = [
   "/",
   "/signup",
   "/confirm-account",
-  "forgot-password",
-  "reset-password",
+  "/forgot-password",
+  "/reset-password",
   "/verify-mfa",
 ];
 
-export default async function middleware(req: NextRequest) {
+export default async function proxy(req: NextRequest) {
   const path = req.nextUrl.pathname;
-  const isProtectedRoute = protectedRoutes.includes(path);
+  const isProtectedRoute = protectedPrefixes.some(
+    (p) => path === p || path.startsWith(`${p}/`)
+  );
   const isPublicRoute = publicRoutes.includes(path);
 
   const accessToken = req.cookies.get("accessToken")?.value;
@@ -27,3 +29,7 @@ export default async function middleware(req: NextRequest) {
 
   return NextResponse.next();
 }
+
+export const config = {
+  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
+};
