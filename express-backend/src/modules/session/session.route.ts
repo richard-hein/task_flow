@@ -5,6 +5,6 @@ const sessionRoutes = Router();
 
 sessionRoutes.get("/all", sessionController.getAllSession);
 sessionRoutes.get("/single", sessionController.getSession);
-sessionRoutes.get("/:id", sessionController.deleteSession);
+sessionRoutes.delete("/:id", sessionController.deleteSession);
 
 export default sessionRoutes;

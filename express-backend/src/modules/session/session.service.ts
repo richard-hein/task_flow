@@ -44,7 +44,7 @@ export class SessionService {
 
   // Delete session
   public async deleteSession(sessionId: string, userId: string) {
-    const deletedSession = await SessionModel.findByIdAndUpdate({
+    const deletedSession = await SessionModel.findOneAndDelete({
       _id: sessionId,
       userId: userId,
     });
