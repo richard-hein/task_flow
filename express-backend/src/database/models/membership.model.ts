@@ -5,20 +5,20 @@ const membershipSchema = new Schema(
     orgId: {
       type: Schema.Types.ObjectId,
       ref: "Org",
-      require: true,
+      required: true,
       index: true,
     },
     userId: {
       type: Schema.Types.ObjectId,
       ref: "User",
-      require: true,
+      required: true,
       index: true,
     },
     role: {
       type: String,
       enum: ["admin", "member"],
       default: "member",
-      require: true,
+      required: true,
     },
   },
   { timestamps: true },

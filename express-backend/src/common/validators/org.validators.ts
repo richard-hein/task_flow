@@ -1,15 +1,10 @@
 import z from "zod";
-
-export const orgNameSchema = z.string().trim().min(1).max(255);
-
-export const orgIdSchema = z.string().trim().min(1).max(255);
+import { emailSchema, verificationCodeSchema } from "./auth.validators.js";
 
 export const createOrgSchema = z.object({
-  name: orgNameSchema,
-  ownerId: orgIdSchema,
+  name: z.string().trim().min(1).max(100),
 });
 
-export const updateOrgSchema = z.object({
-  name: orgNameSchema,
-  ownerId: orgIdSchema,
-});
+export const inviteSchema = z.object({ email: emailSchema });
+export const roleSchema = z.object({ role: z.enum(["admin", "member"]) });
+export const acceptInviteSchema = z.object({ code: verificationCodeSchema });

@@ -1,0 +1,40 @@
+import { Router } from "express";
+import { organizationController } from "./org.module.js";
+import { requireOrgAdmin } from "../../middlewares/require-org-admin.middleware.js";
+import { requireOrgMember } from "../../middlewares/require-org-member.middleware.js";
+
+const orgRoutes = Router();
+
+orgRoutes.post("/", organizationController.createOrg);
+orgRoutes.get("/", organizationController.listMyOrgs);
+orgRoutes.get(
+  "/:id/members",
+  requireOrgMember(),
+  organizationController.listMembers,
+);
+orgRoutes.put(
+  "/:id/members/:uid",
+  requireOrgAdmin(),
+  organizationController.updateRole,
+);
+orgRoutes.delete(
+  "/:id/members/:uid",
+  requireOrgAdmin(),
+  organizationController.removeMember,
+);
+orgRoutes.post(
+  "/:id/leave",
+  requireOrgMember(),
+  organizationController.leaveOrg,
+);
+orgRoutes.post(
+  "/:id/invite",
+  requireOrgAdmin(),
+  organizationController.invite,
+);
+
+const inviteRoutes = Router();
+
+inviteRoutes.post("/accept", organizationController.acceptInvite);
+
+export { orgRoutes, inviteRoutes };

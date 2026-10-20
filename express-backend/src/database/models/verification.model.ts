@@ -5,6 +5,7 @@ import { generateUniqueCode } from "../../common/utils/uuid.js";
 
 export interface VerificationCodeDocument extends Document {
   userId: mongoose.Types.ObjectId;
+  orgId?: mongoose.Types.ObjectId;
   code: string;
   type: VerificationEnum;
   expiresAt: Date;
@@ -17,6 +18,10 @@ const verificationCodeSchema = new Schema<VerificationCodeDocument>({
     ref: "User",
     index: true,
     required: true,
+  },
+  orgId: {
+    type: Schema.Types.ObjectId,
+    ref: "Org",
   },
   code: {
     type: String,

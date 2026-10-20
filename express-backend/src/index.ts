@@ -12,6 +12,10 @@ import passport from "./middlewares/passport.js";
 import { authenticateJWT } from "./common/strategies/jwt.strategy.js";
 import sessionRoutes from "./modules/session/session.route.js";
 import mfaRoutes from "./modules/mfa/mfa.route.js";
+import {
+  orgRoutes,
+  inviteRoutes,
+} from "./modules/organization/org.route.js";
 
 const app = express();
 const BASE_PATH = config.BASE_PATH;
@@ -31,6 +35,8 @@ app.get(
 app.use(`${BASE_PATH}/auth`, authRoutes);
 app.use(`${BASE_PATH}/session`, authenticateJWT, sessionRoutes);
 app.use(`${BASE_PATH}/mfa`, mfaRoutes);
+app.use(`${BASE_PATH}/orgs`, authenticateJWT, orgRoutes);
+app.use(`${BASE_PATH}/invites`, authenticateJWT, inviteRoutes);
 
 app.use(errorHandler);
 app.listen(config.PORT, async () => {
