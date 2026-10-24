@@ -19,6 +19,7 @@ export const calculateExpirationDate = (expiresIn: string = "15m"): Date => {
   const match = expiresIn.match(/^(\d+)([mhd])$/);
   if (!match) throw new Error('Invalid format. Use "15m", "1h", or "2d".');
   const [, value, unit] = match;
+  if (!value || !unit) throw new Error("Invalid expiration format.");
   const expirationDate = new Date();
 
   // Check the unit and apply accordingly

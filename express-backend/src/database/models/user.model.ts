@@ -4,7 +4,7 @@ import { compareValue, hashValue } from "../../common/utils/bcrypt.js";
 interface UserPreferences {
   enable2FA: boolean;
   emailNotification: boolean;
-  twoFactorSecret?: string;
+  twoFactorSecret?: string | undefined;
 }
 
 export interface UserDocument extends Document {

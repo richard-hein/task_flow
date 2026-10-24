@@ -23,12 +23,15 @@ comments, and v2/v3 add notifications, admin, search, and file uploads.
 | Frontend | Next.js + axios `withCredentials` + RHF/Zod + TanStack Query (already built: `/orgs`, `/org/[id]/board`, `/org/[id]/members`, dashboard `/home`) |
 | Later    | BullMQ + Redis (v2 queues), `vitest + supertest + mongodb-memory-server` (tests), Docker (ops) |
 
-**Where things stand today:**
+**Where things stand today (last updated: phase 2 code-complete):**
 
 - ✅ Auth/MFA/sessions/User models — done, keep as-is (`src/modules/{auth,mfa,session,user}`, `src/database/models/{user,session,verification}.model.ts`).
-- ✅ Frontend SaaS pages — built against the API contract below; they 404 until the backend phases land.
-- ❌ Backend SaaS (orgs → projects → tasks → comments) — **this doc is the build order.**
-- ❌ Queues, admin/audit, search/files — v2/v3, fully specified here (§9–§10).
+- ✅ Phase 0 auth gap fixes — all 5 done (token signing, `POST /auth/password/reset`, `DELETE /session/:id` scoped to user, prod cookie flags, Taskflow branding).
+- ✅ Phase 1 orgs + members + invites — committed (`1462c3c`), mounted at `/orgs` + `/invites`.
+- 🚧 Phase 2 projects — **code complete but uncommitted**: model, module, route, controller, service, validators all exist and are mounted in `src/index.ts`. Remaining: verify isolation + `?archived=` against the frontend, then commit `feat: projects`.
+- ✅ Frontend SaaS pages — built against the API contract below; orgs/members pages should work now, board still 404s until phase 3.
+- ❌ Phases 3–4 backend SaaS (tasks → comments → activity) — **this doc is the build order.**
+- ❌ Phases 5–6 frontend wiring + ops/tests; ❌ queues, admin/audit, search/files — v2/v3 (§9–§10).
 
 ---
 
@@ -85,7 +88,7 @@ see this repeated in every phase — it's deliberate.
 
 ---
 
-## 2. Phase 0 — Fix known gaps first (½ day)
+## 2. Phase 0 — Fix known gaps first (½ day) — ✅ DONE
 
 Why first: the frontend already calls the *correct* shapes, so these are live 404s/wrong-verbs
 today (`SECURITY.md` §10, `SECURITY.md` §11 table).
@@ -98,13 +101,14 @@ today (`SECURITY.md` §10, `SECURITY.md` §11 table).
 | 4 | Enable `secure` + `sameSite` cookie flags for prod (commented out in dev) | `src/common/utils/cookie.ts:15-16` |
 | 5 | Rename backend issuer `squeezy.com` → Taskflow brand in MFA + mailer templates | `src/modules/mfa/mfa.service.ts`, `src/mailers/templates/` |
 
-**Done criteria:** `POST /auth/password/reset` returns 200 (not 404); `DELETE /session/:id`
-works; login still sets both cookies; `tsc --noEmit` (via `npm run build`) clean.
-Commit: `fix: auth route gaps (phase 0)`.
+**Done criteria:** ✅ all met — `POST /auth/password/reset` wired; `DELETE /session/:id` scoped to
+user; login sets both cookies; `tsc --noEmit` clean. (Token-signing fix shipped as part of the
+`jwt.ts` verify-result refactor in the working tree; commit with the phase-2 batch or separately as
+`fix: auth route gaps (phase 0)`.)
 
 ---
 
-## 3. Phase 1 — Orgs + members (build first, ~2–3 days)
+## 3. Phase 1 — Orgs + members (build first, ~2–3 days) — ✅ DONE
 
 **Concepts for beginners:** an `Org` is a workspace. A `Membership` row says "user X belongs
 to org Y with role Z". Roles: `admin` (invite, change roles, remove) vs `member` (read/write
@@ -136,19 +140,19 @@ tasks). Invites reuse the existing `VerificationCode` model with a new type `ORG
 `requireOrgAdmin`. They load `Membership{orgId, userId}`, 404 if none (note: 404, not 403 —
 don't confirm/deny org existence to outsiders), attach `req.membership`, call `next()`.
 
-**Done criteria:**
+**Done criteria:** ✅ all met (committed `1462c3c`).
 
-- [ ] Creator is admin; `GET /orgs` shows only my orgs (user B sees zero of A's).
-- [ ] B `GET /orgs/<A-id>/members` → 404 (isolation — the golden rule holds).
-- [ ] Invite: accept works once; second accept with same code → 404/400.
-- [ ] Accept with a different logged-in email → rejected.
-- [ ] Non-admin `PUT …/members/…` → 403; last-admin remove/leave → 400.
+- [x] Creator is admin; `GET /orgs` shows only my orgs (user B sees zero of A's).
+- [x] B `GET /orgs/<A-id>/members` → 404 (isolation — the golden rule holds).
+- [x] Invite: accept works once; second accept with same code → 404/400.
+- [x] Accept with a different logged-in email → rejected.
+- [x] Non-admin `PUT …/members/…` → 403; last-admin remove/leave → 400.
 
 Commit: `feat: orgs + members + invites`.
 
 ---
 
-## 4. Phase 2 — Projects (~1 day)
+## 4. Phase 2 — Projects (~1 day) — 🚧 CODE DONE, UNCOMMITTED
 
 **Concept:** a project is a task container inside one org (a board). `archived` is soft-delete —
 list hides archived by default, nothing is ever hard-deleted here.
@@ -164,12 +168,14 @@ list hides archived by default, nothing is ever hard-deleted here.
 | `PUT` | `/projects/:pid` | member | Rename / archive. Must verify `pid` belongs to an org I'm in |
 | `DELETE` | `/projects/:pid` | admin | Delete project + its tasks (or refuse if tasks exist — pick delete-cascade, simpler) |
 
-**Done criteria:** project invisible outside its org; `?archived=` filter works; `tsc` clean.
-Commit: `feat: projects`.
+**Done criteria:** 🚧 code complete — model, validators, module, route, controller, service all
+exist and are mounted (`src/index.ts`). Still to do: run it against the frontend (create/list
+projects from the board page), confirm cross-org → 404 and `?archived=` filter, then
+commit `feat: projects`.
 
 ---
 
-## 5. Phase 3 — Tasks, the core (~2–3 days)
+## 5. Phase 3 — Tasks, the core (~2–3 days) — ❌ NEXT UP
 
 **Concepts:** a task lives in exactly one project **and** carries a denormalized `orgId`
 (both indexed — `orgId` is what enforces tenancy without a join on every read).
@@ -209,7 +215,7 @@ Commit: `feat: tasks + board + move state machine`.
 
 ---
 
-## 6. Phase 4 — Comments + activity (~1 day, closes v1 backend)
+## 6. Phase 4 — Comments + activity (~1 day, closes v1 backend) — ❌ PENDING
 
 **Concepts:** `Comment` is user content; `Activity` is an automatic audit trail written by the
 server on every mutation (create/move/assign/comment) — never trust the client to log itself.
@@ -238,7 +244,7 @@ comment; outsider gets 404. Commit: `feat: comments + activity`.
 
 ---
 
-## 7. Phase 5 — Connect the frontend (already built, ~½ day)
+## 7. Phase 5 — Connect the frontend (already built, ~½ day) — ❌ PENDING
 
 The frontend was built against exactly the contract above. For each page, what it calls
 (all in `next-frontend/lib/api.ts`) and what "working" looks like:
@@ -263,7 +269,7 @@ The frontend was built against exactly the contract above. For each page, what i
 
 ---
 
-## 8. Phase 6 — Ops + tests (v1 close, ~2 days)
+## 8. Phase 6 — Ops + tests (v1 close, ~2 days) — ❌ PENDING
 
 Do these in order — each is small:
 
@@ -284,7 +290,7 @@ Do these in order — each is small:
 
 ---
 
-## 9. v2 — Notifications + Admin & audit (~1 week)
+## 9. v2 — Notifications + Admin & audit (~1 week) — ❌ NOT STARTED
 
 *Why v2, not v1:* both need the v1 data model stable first, and both introduce infrastructure
 (Redis) or cross-cutting concerns (roles) that are painful to retrofit mid-v1.
@@ -366,7 +372,7 @@ Commit trail: `feat: queues + mail worker` → `feat: in-app notifications` → 
 
 ---
 
-## 10. v3 — Search + files (pick ONE first, ~3–4 days each)
+## 10. v3 — Search + files (pick ONE first, ~3–4 days each) — ❌ NOT STARTED
 
 *Why last:* both are standalone value-adds with zero dependencies on v2. Ship one, learn, then the other.
 

@@ -1,0 +1,150 @@
+
+> advanced_auth@1.0.0 dev
+> tsx watch src/index.ts
+
+Server listening on port 4000 in development
+Connected to Mongo database.
+Error occurred on PATH: /api/v1/projects/33340/tasks CastError: Cast to ObjectId failed for value "33340" (type string) at path "_id" for model "Project"
+    at SchemaObjectId.cast (C:\Users\DELL\Desktop\Nodejs\golden-city\express-backend\node_modules\mongoose\lib\schema\objectId.js:253:11)
+    at SchemaType.applySetters (C:\Users\DELL\Desktop\Nodejs\golden-city\express-backend\node_modules\mongoose\lib\schemaType.js:1288:12)
+    at SchemaType.castForQuery (C:\Users\DELL\Desktop\Nodejs\golden-city\express-backend\node_modules\mongoose\lib\schemaType.js:1718:17)
+    at cast (C:\Users\DELL\Desktop\Nodejs\golden-city\express-backend\node_modules\mongoose\lib\cast.js:390:32)
+    at Query.cast (C:\Users\DELL\Desktop\Nodejs\golden-city\express-backend\node_modules\mongoose\lib\query.js:5055:12)
+    at Query._castConditions (C:\Users\DELL\Desktop\Nodejs\golden-city\express-backend\node_modules\mongoose\lib\query.js:2374:10)
+    at model.Query._findOne (C:\Users\DELL\Desktop\Nodejs\golden-city\express-backend\node_modules\mongoose\lib\query.js:2697:8)
+    at model.Query.exec (C:\Users\DELL\Desktop\Nodejs\golden-city\express-backend\node_modules\mongoose\lib\query.js:4622:80)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async TaskService.getProjectForUser (C:\Users\DELL\Desktop\Nodejs\golden-city\express-backend\src\modules\task\task.service.ts:126:21) {
+  stringValue: '"33340"',
+  messageFormat: undefined,
+  kind: 'ObjectId',
+  value: '33340',
+  path: '_id',
+  reason: BSONError: input must be a 24 character hex string, 12 byte Uint8Array, or an integer
+      at new ObjectId (C:\Users\DELL\Desktop\Nodejs\golden-city\express-backend\node_modules\bson\src\objectid.ts:120:15)
+      at castObjectId (C:\Users\DELL\Desktop\Nodejs\golden-city\express-backend\node_modules\mongoose\lib\cast\objectid.js:25:12)
+      at SchemaObjectId.cast (C:\Users\DELL\Desktop\Nodejs\golden-city\express-backend\node_modules\mongoose\lib\schema\objectId.js:251:12)
+      at SchemaType.applySetters (C:\Users\DELL\Desktop\Nodejs\golden-city\express-backend\node_modules\mongoose\lib\schemaType.js:1288:12)
+      at SchemaType.castForQuery (C:\Users\DELL\Desktop\Nodejs\golden-city\express-backend\node_modules\mongoose\lib\schemaType.js:1718:17)
+      at cast (C:\Users\DELL\Desktop\Nodejs\golden-city\express-backend\node_modules\mongoose\lib\cast.js:390:32)
+      at Query.cast (C:\Users\DELL\Desktop\Nodejs\golden-city\express-backend\node_modules\mongoose\lib\query.js:5055:12)
+      at Query._castConditions (C:\Users\DELL\Desktop\Nodejs\golden-city\express-backend\node_modules\mongoose\lib\query.js:2374:10)
+      at model.Query._findOne (C:\Users\DELL\Desktop\Nodejs\golden-city\express-backend\node_modules\mongoose\lib\query.js:2697:8)
+      at model.Query.exec (C:\Users\DELL\Desktop\Nodejs\golden-city\express-backend\node_modules\mongoose\lib\query.js:4622:80),
+  valueType: 'string'
+}
+Error occurred on PATH: /api/v1/projects/33340/tasks CastError: Cast to ObjectId failed for value "33340" (type string) at path "_id" for model "Project"
+    at SchemaObjectId.cast (C:\Users\DELL\Desktop\Nodejs\golden-city\express-backend\node_modules\mongoose\lib\schema\objectId.js:253:11)
+    at SchemaType.applySetters (C:\Users\DELL\Desktop\Nodejs\golden-city\express-backend\node_modules\mongoose\lib\schemaType.js:1288:12)
+    at SchemaType.castForQuery (C:\Users\DELL\Desktop\Nodejs\golden-city\express-backend\node_modules\mongoose\lib\schemaType.js:1718:17)
+    at cast (C:\Users\DELL\Desktop\Nodejs\golden-city\express-backend\node_modules\mongoose\lib\cast.js:390:32)
+    at Query.cast (C:\Users\DELL\Desktop\Nodejs\golden-city\express-backend\node_modules\mongoose\lib\query.js:5055:12)
+    at Query._castConditions (C:\Users\DELL\Desktop\Nodejs\golden-city\express-backend\node_modules\mongoose\lib\query.js:2374:10)
+    at model.Query._findOne (C:\Users\DELL\Desktop\Nodejs\golden-city\express-backend\node_modules\mongoose\lib\query.js:2697:8)
+    at model.Query.exec (C:\Users\DELL\Desktop\Nodejs\golden-city\express-backend\node_modules\mongoose\lib\query.js:4622:80)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async TaskService.getProjectForUser (C:\Users\DELL\Desktop\Nodejs\golden-city\express-backend\src\modules\task\task.service.ts:126:21) {
+  stringValue: '"33340"',
+  messageFormat: undefined,
+  kind: 'ObjectId',
+  value: '33340',
+  path: '_id',
+  reason: BSONError: input must be a 24 character hex string, 12 byte Uint8Array, or an integer
+      at new ObjectId (C:\Users\DELL\Desktop\Nodejs\golden-city\express-backend\node_modules\bson\src\objectid.ts:120:15)
+      at castObjectId (C:\Users\DELL\Desktop\Nodejs\golden-city\express-backend\node_modules\mongoose\lib\cast\objectid.js:25:12)
+      at SchemaObjectId.cast (C:\Users\DELL\Desktop\Nodejs\golden-city\express-backend\node_modules\mongoose\lib\schema\objectId.js:251:12)
+      at SchemaType.applySetters (C:\Users\DELL\Desktop\Nodejs\golden-city\express-backend\node_modules\mongoose\lib\schemaType.js:1288:12)
+      at SchemaType.castForQuery (C:\Users\DELL\Desktop\Nodejs\golden-city\express-backend\node_modules\mongoose\lib\schemaType.js:1718:17)
+      at cast (C:\Users\DELL\Desktop\Nodejs\golden-city\express-backend\node_modules\mongoose\lib\cast.js:390:32)
+      at Query.cast (C:\Users\DELL\Desktop\Nodejs\golden-city\express-backend\node_modules\mongoose\lib\query.js:5055:12)
+      at Query._castConditions (C:\Users\DELL\Desktop\Nodejs\golden-city\express-backend\node_modules\mongoose\lib\query.js:2374:10)
+      at model.Query._findOne (C:\Users\DELL\Desktop\Nodejs\golden-city\express-backend\node_modules\mongoose\lib\query.js:2697:8)
+      at model.Query.exec (C:\Users\DELL\Desktop\Nodejs\golden-city\express-backend\node_modules\mongoose\lib\query.js:4622:80),
+  valueType: 'string'
+}
+Error occurred on PATH: /api/v1/tasks/6adb16bc97e8c5144d48e9d8/move BadRequestException [Error]: Illegal status move: todo -> done
+    at TaskService.moveTask (C:\Users\DELL\Desktop\Nodejs\golden-city\express-backend\src\modules\task\task.service.ts:103:13)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async <anonymous> (C:\Users\DELL\Desktop\Nodejs\golden-city\express-backend\src\modules\task\task.controller.ts:72:22)
+    at async <anonymous> (C:\Users\DELL\Desktop\Nodejs\golden-city\express-backend\src\middlewares\asyncHandler.ts:13:7) {
+  statusCode: 400,
+  errorCode: undefined
+}
+Error occurred on PATH: /api/v1/tasks/6adb16bc97e8c5144d48e9d8/move BadRequestException [Error]: Illegal status move: done -> todo
+    at TaskService.moveTask (C:\Users\DELL\Desktop\Nodejs\golden-city\express-backend\src\modules\task\task.service.ts:103:13)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async <anonymous> (C:\Users\DELL\Desktop\Nodejs\golden-city\express-backend\src\modules\task\task.controller.ts:72:22)
+    at async <anonymous> (C:\Users\DELL\Desktop\Nodejs\golden-city\express-backend\src\middlewares\asyncHandler.ts:13:7) {
+  statusCode: 400,
+  errorCode: undefined
+}
+Error occurred on PATH: /api/v1/tasks/6adb16bc97e8c5144d48e9d8 BadRequestException [Error]: Assignee is not an org member
+    at TaskService.assertOrgMember (C:\Users\DELL\Desktop\Nodejs\golden-city\express-backend\src\modules\task\task.service.ts:150:13)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async TaskService.updateTask (C:\Users\DELL\Desktop\Nodejs\golden-city\express-backend\src\modules\task\task.service.ts:84:7)
+    at async <anonymous> (C:\Users\DELL\Desktop\Nodejs\golden-city\express-backend\src\modules\task\task.controller.ts:56:22)
+    at async <anonymous> (C:\Users\DELL\Desktop\Nodejs\golden-city\express-backend\src\middlewares\asyncHandler.ts:13:7) {
+  statusCode: 400,
+  errorCode: undefined
+}
+Error occurred on PATH: /api/v1/projects/6adb16bc97e8c5144d48e9cf/tasks NotFoundException [Error]: Project not found
+    at TaskService.getProjectForUser (C:\Users\DELL\Desktop\Nodejs\golden-city\express-backend\src\modules\task\task.service.ts:132:28)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async TaskService.createTask (C:\Users\DELL\Desktop\Nodejs\golden-city\express-backend\src\modules\task\task.service.ts:43:21)
+    at async <anonymous> (C:\Users\DELL\Desktop\Nodejs\golden-city\express-backend\src\modules\task\task.controller.ts:24:22)
+    at async <anonymous> (C:\Users\DELL\Desktop\Nodejs\golden-city\express-backend\src\middlewares\asyncHandler.ts:13:7) {
+  statusCode: 404,
+  errorCode: 'RESOURCE_NOT_FOUND'
+}
+Error occurred on PATH: /api/v1/tasks/6adb16bc97e8c5144d48e9d8 NotFoundException [Error]: Task not found
+    at TaskService.getTaskForUser (C:\Users\DELL\Desktop\Nodejs\golden-city\express-backend\src\modules\task\task.service.ts:143:28)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async TaskService.updateTask (C:\Users\DELL\Desktop\Nodejs\golden-city\express-backend\src\modules\task\task.service.ts:82:18)
+    at async <anonymous> (C:\Users\DELL\Desktop\Nodejs\golden-city\express-backend\src\modules\task\task.controller.ts:56:22)
+    at async <anonymous> (C:\Users\DELL\Desktop\Nodejs\golden-city\express-backend\src\middlewares\asyncHandler.ts:13:7) {
+  statusCode: 404,
+  errorCode: 'RESOURCE_NOT_FOUND'
+}
+Error occurred on PATH: /api/v1/tasks/6adb16bc97e8c5144d48e9d8/move NotFoundException [Error]: Task not found
+    at TaskService.getTaskForUser (C:\Users\DELL\Desktop\Nodejs\golden-city\express-backend\src\modules\task\task.service.ts:143:28)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async TaskService.moveTask (C:\Users\DELL\Desktop\Nodejs\golden-city\express-backend\src\modules\task\task.service.ts:101:18)
+    at async <anonymous> (C:\Users\DELL\Desktop\Nodejs\golden-city\express-backend\src\modules\task\task.controller.ts:72:22)
+    at async <anonymous> (C:\Users\DELL\Desktop\Nodejs\golden-city\express-backend\src\middlewares\asyncHandler.ts:13:7) {
+  statusCode: 404,
+  errorCode: 'RESOURCE_NOT_FOUND'
+}
+Error occurred on PATH: /api/v1/tasks/6adb16bc97e8c5144d48e9d8 NotFoundException [Error]: Task not found
+    at TaskService.getTaskForUser (C:\Users\DELL\Desktop\Nodejs\golden-city\express-backend\src\modules\task\task.service.ts:143:28)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async TaskService.deleteTask (C:\Users\DELL\Desktop\Nodejs\golden-city\express-backend\src\modules\task\task.service.ts:119:18)
+    at async <anonymous> (C:\Users\DELL\Desktop\Nodejs\golden-city\express-backend\src\modules\task\task.controller.ts:88:7)
+    at async <anonymous> (C:\Users\DELL\Desktop\Nodejs\golden-city\express-backend\src\middlewares\asyncHandler.ts:13:7) {
+  statusCode: 404,
+  errorCode: 'RESOURCE_NOT_FOUND'
+}
+Error occurred on PATH: /api/v1/tasks/6adb16bc97e8c5144d48e9d8 NotFoundException [Error]: Task not found
+    at TaskService.getTaskForUser (C:\Users\DELL\Desktop\Nodejs\golden-city\express-backend\src\modules\task\task.service.ts:143:28)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async TaskService.updateTask (C:\Users\DELL\Desktop\Nodejs\golden-city\express-backend\src\modules\task\task.service.ts:82:18)
+    at async <anonymous> (C:\Users\DELL\Desktop\Nodejs\golden-city\express-backend\src\modules\task\task.controller.ts:56:22)
+    at async <anonymous> (C:\Users\DELL\Desktop\Nodejs\golden-city\express-backend\src\middlewares\asyncHandler.ts:13:7) {
+  statusCode: 404,
+  errorCode: 'RESOURCE_NOT_FOUND'
+}
+Error occurred on PATH: /api/v1/projects/6adb16bc97e8c5144d48e9cf/tasks NotFoundException [Error]: Project not found
+    at TaskService.getProjectForUser (C:\Users\DELL\Desktop\Nodejs\golden-city\express-backend\src\modules\task\task.service.ts:132:28)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async TaskService.listTasks (C:\Users\DELL\Desktop\Nodejs\golden-city\express-backend\src\modules\task\task.service.ts:62:21)
+    at async <anonymous> (C:\Users\DELL\Desktop\Nodejs\golden-city\express-backend\src\modules\task\task.controller.ts:40:22)
+    at async <anonymous> (C:\Users\DELL\Desktop\Nodejs\golden-city\express-backend\src\middlewares\asyncHandler.ts:13:7) {
+  statusCode: 404,
+  errorCode: 'RESOURCE_NOT_FOUND'
+}
+Error occurred on PATH: /api/v1/orgs/6adb15a097e8c5144d48e9b0/projects NotFoundException [Error]: Organization not found
+    at <anonymous> (C:\Users\DELL\Desktop\Nodejs\golden-city\express-backend\src\middlewares\require-org-member.middleware.ts:15:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async <anonymous> (C:\Users\DELL\Desktop\Nodejs\golden-city\express-backend\src\middlewares\asyncHandler.ts:13:7) {
+  statusCode: 404,
+  errorCode: 'RESOURCE_NOT_FOUND'
+}

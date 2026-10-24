@@ -130,18 +130,22 @@ export class AuthService {
 
   // Refresh
   public async refreshToken(refreshToken: string) {
-    const { payload } = verifyJwtToken<RefreshTPayload>(refreshToken, {
+    const result = verifyJwtToken<RefreshTPayload>(refreshToken, {
       secret: refreshTokenSignOptions.secret,
     });
-    if (!payload) {
+    if ("error" in result) {
       throw new UnauthorizedException("Invalid refresh token");
     }
+    const { payload } = result;
     const session = await SessionModel.findById(payload.sessionId);
+    if (!session) {
+      throw new UnauthorizedException("Session not found");
+    }
     const now = Date.now();
-    if (session?.expiredAt.getTime() <= now) {
+    if (session.expiredAt.getTime() <= now) {
       throw new UnauthorizedException("Session expired");
     }
-    const sessionRefresh = session?.expiredAt.getTime() - now <= ONE_DAY_IN_MS;
+    const sessionRefresh = session.expiredAt.getTime() - now <= ONE_DAY_IN_MS;
 
     if (sessionRefresh) {
       session.expiredAt = calculateExpirationDate(
@@ -159,7 +163,8 @@ export class AuthService {
         )
       : undefined;
     const accessToken = signJwtToken({
-      sessionId: session?._id,
+      userId: session.userId,
+      sessionId: session._id,
     });
     return {
       accessToken,

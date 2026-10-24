@@ -3,7 +3,7 @@ import type { ErrorCode } from "../enums/error-code.enum.js";
 
 export class AppError extends Error {
   public statusCode: HttpStatusCode;
-  public errorCode?: ErrorCode;
+  public errorCode: ErrorCode | undefined;
 
   constructor(
     message: string,
