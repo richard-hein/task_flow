@@ -79,7 +79,7 @@ export const sessionsQueryFn = async () => {
 export const sessionDelMutationFn = async (id: string) =>
   await API.delete(`/session/${id}`);
 
-// ponytail: SaaS v1 contract mirrors backend/FEATURES.md B-E; backend not coded yet
+// SaaS v1 contract — see PROJECT.md §10 (single source of truth); frontend wiring is phase 5
 export type OrgType = { _id: string; name: string; ownerId: string };
 export type ProjectType = { _id: string; orgId: string; name: string; archived: boolean };
 export type TaskStatus = "todo" | "doing" | "done";
