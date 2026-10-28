@@ -60,7 +60,7 @@ task_flow/
 
 ## 3. Current status + working agreement
 
-**Last updated: after commit `1464ee6` (phases 2–3 landed).**
+**Last updated: phase 4 code complete (build green, runtime pending — no Mongo yet).**
 
 | Phase | What | State |
 |-------|------|-------|
@@ -68,24 +68,23 @@ task_flow/
 | 1 | Orgs + members + invites (`/orgs`, `/invites`) | ✅ committed (`1462c3c`) |
 | 2 | Projects (CRUD inside orgs, `?archived=`) | ✅ committed (`1464ee6`) |
 | 3 | Tasks: board, move state machine (`todo→doing→done`), float order | ✅ code committed (`1464ee6`), ⚠️ **never built or exercised since** |
-| 3.5 | Tasks cleanup: cascade, per-status `order`, nullable assignee, first real build | 🚧 **next up** |
-| 4 | Comments + auto-activity feed | ❌ after 3.5 |
+| 3.5 | Tasks cleanup: cascade, per-status `order`, nullable assignee, first real build | ✅ done — build green |
+| 4 | Comments + auto-activity feed | ✅ code complete — runtime verification blocked on Mongo |
 | 5 | Wire/verify frontend against the API | ⏸ **deferred** — backend first |
 | 6 | Ops: logging, health, tests, Docker, CI (v1 close) | ❌ after 4 |
 | v2 | Queues, in-app notifications, admin + audit | ❌ |
 | v3 | Full-text search, or S3/R2 file uploads | ❌ |
 
-**Why phase 3 is "unverified":** `express-backend/node_modules` was empty at audit time, so
-`tsc` and the server have not run since `1464ee6`. Nothing is known to be broken — nothing is
-known to be green either. Step 1 of 3.5 fixes that.
+**Why things are "unverified":** `express-backend/node_modules` was empty until phase 3.5, and no
+database has been running since. `tsc` is now green for phases 3.5 + 4, but no endpoint has been
+exercised at runtime. Nothing is known to be broken — nothing is known to be green either.
 
 **Working agreement (how this build is run):**
 
 - **Backend first.** No frontend work until v1 backend is done. Only `next-frontend/lib/api.ts`
   is read, and only as the frozen response contract.
-- **Mentor-led.** The project owner writes every file. The agent explains the concept, points at
-  the exact file/line, gives acceptance criteria and reviews the diff — it does not write
-  implementation code.
+- **Implementation split.** From phase 4 onward the agent writes the code and the project owner
+  reviews each diff before commit. Phases 0–3.5 were mentor-led (owner wrote, agent reviewed).
 - Each step is **predict → attempt → verify with real command output → commit**. No commit with
   a red `npm run build`.
 - **One file per step.** If a step touches three files, it is three steps.
@@ -95,7 +94,9 @@ known to be green either. Step 1 of 3.5 fixes that.
 **What's live today:** full auth (register/login/logout, sliding 15m/30d httpOnly cookies,
 session list/revoke, TOTP MFA, email verify, password forgot/reset); orgs (create, list mine,
 members CRUD with roles, leave, single-use 7-day invites); projects (create/list per org,
-rename/archive, admin-only delete). Tasks exist in code but are unverified (§6.3–6.4).
+rename/archive, admin-only delete with task cascade); tasks (board, filters, state-machine moves,
+per-status order, assign/unassign); comments + activity feed. Everything from tasks onward is
+build-verified but not yet runtime-verified.
 
 ## 4. How this codebase works (read once)
 
@@ -332,7 +333,7 @@ this. `order` is a float: insert between two tasks by averaging their orders, no
 Landing note: shipped early as part of `1464ee6` rather than its own commit; the commit message
 `feat: tasks + board + move state machine` was used for the projects+tasks batch.
 
-### 6.4 Phase 3.5 — Tasks cleanup — 🚧 START HERE
+### 6.4 Phase 3.5 — Tasks cleanup — ✅ DONE (build green, runtime pending)
 
 **Step 1 — baseline.** `cd express-backend && npm install && npm run build`. Do not change code
 first: whatever the build says is the true state of `1464ee6`. Paste the output. If clean, that
@@ -362,7 +363,7 @@ three new tasks have `order` 1, 2, 3 in `todo` (not 1, 4, 7).
 **Done criteria:** build clean, all five checks pass, `git diff` has no unrelated edits.
 Commit `fix: task/project cascade + per-status order`.
 
-### 6.5 Phase 4 — Comments + activity — ❌ after 3.5 (closes v1 backend)
+### 6.5 Phase 4 — Comments + activity — ✅ CODE COMPLETE, runtime unverified (closes v1 backend)
 
 **Concepts:** `Comment` is user content; `Activity` is an automatic trail the **server** writes on
 every mutation — never trust the client to log itself.
@@ -406,7 +407,19 @@ order; B cannot read or delete A's comments (404); a non-author member can't del
 author can; an org admin can delete someone else's.
 
 **Done criteria:** 3 activity rows, author/admin delete, outsider 404, build clean.
-Commit `feat: comments + activity`.
+
+> **Status:** implemented — `comment.model.ts`, `activity.model.ts`, both modules, validators,
+> task-service wiring (`created`/`moved`/`assigned`), delete cascades, and the `${BASE_PATH}`
+> mounts. `tsc` is green. **Runtime is unverified** because no Mongo was running; work through
+> `express-backend/docs/http/comments.http` once it is.
+>
+> Implementation notes worth reviewing: `logActivity` is synchronous-void and swallows errors
+> (`activity.service.ts`); delete permission derives membership from the comment's own `orgId`,
+> returning 404 for outsiders and 403 for members who are neither author nor admin; `assigned`
+> compares the pre-update value, so `null` logs `unassigned`; task delete removes comments and
+> activity before the task row.
+
+Commit: `feat: comments + activity`.
 
 ### 6.6 Phase 5 — Frontend wiring — ⏸ DEFERRED
 
