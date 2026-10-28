@@ -1,0 +1,97 @@
+### Taskflow phase 4 smoke test (VS Code REST Client)
+### Prereqs: server on :4000, Mongo up, users A and B registered + email-verified.
+### Cookies are stored per host by the REST Client, so re-run "Login" to switch users.
+
+@base = http://localhost:4000/api/v1
+
+### 0a. Login as A
+POST {{base}}/auth/login
+Content-Type: application/json
+
+{ "email": "a@example.com", "password": "secret123" }
+
+### 0b. Login as B (re-run this to act as B; re-run 0a to switch back)
+POST {{base}}/auth/login
+Content-Type: application/json
+
+{ "email": "b@example.com", "password": "secret123" }
+
+### 1. Create org (A)
+POST {{base}}/orgs
+Content-Type: application/json
+
+{ "name": "Smoke Org" }
+
+### 2. Create project (A) — paste orgId from 1
+POST {{base}}/orgs/ORG_ID/projects
+Content-Type: application/json
+
+{ "name": "Smoke Project" }
+
+### 3. Create task (A) — paste projectId from 2
+POST {{base}}/projects/PROJECT_ID/tasks
+Content-Type: application/json
+
+{ "title": "Comment me", "priority": "med" }
+
+### 4. Comment (A) — paste taskId from 3
+POST {{base}}/tasks/TASK_ID/comments
+Content-Type: application/json
+
+{ "body": "First comment" }
+
+### 5. List comments (A) — expect { comments: [ ... ] }, oldest first
+GET {{base}}/tasks/TASK_ID/comments?page=1&limit=20
+
+### 6. Move the task (A) — legal
+PUT {{base}}/tasks/TASK_ID/move
+Content-Type: application/json
+
+{ "status": "doing" }
+
+### 7. Skip move (A) — expect 400 Illegal status move: doing -> todo? (use done -> todo instead)
+PUT {{base}}/tasks/TASK_ID/move
+Content-Type: application/json
+
+{ "status": "todo" }
+
+### 8. Activity (A) — expect newest first: moved, commented, created (3 rows)
+GET {{base}}/tasks/TASK_ID/activity?page=1&limit=20
+
+### 9. Assign (A) to B's userId — expect an "assigned" row appended
+PUT {{base}}/tasks/TASK_ID
+Content-Type: application/json
+
+{ "assigneeId": "USER_B_ID" }
+
+### 10. Unassign (A) — expect detail "unassigned" and the field really gone
+PUT {{base}}/tasks/TASK_ID
+Content-Type: application/json
+
+{ "assigneeId": null }
+
+### 11. Assign to a non-member — expect 400 "Assignee is not an org member"
+PUT {{base}}/tasks/TASK_ID
+Content-Type: application/json
+
+{ "assigneeId": "SOMEONE_ELSE_ID" }
+
+### 12. As B (non-member): read A's comments — expect 404
+GET {{base}}/tasks/TASK_ID/comments
+
+### 13. As B: read A's activity — expect 404
+GET {{base}}/tasks/TASK_ID/activity
+
+### 14. As B: delete A's comment — expect 404
+DELETE {{base}}/comments/COMMENT_ID
+
+### 15. As A but non-author (make a second member comment first): expect 403
+###     1) login as B, 2) POST a comment, 3) login as A, 4) delete B's comment
+DELETE {{base}}/comments/COMMENT_ID
+
+### 16. Delete own comment (author) — expect 200
+DELETE {{base}}/comments/COMMENT_ID
+
+### 17. Delete task (A) — expect 200; then 4 and 8 must 404 and Mongo must have no
+###     comments/activity rows for that taskId
+DELETE {{base}}/tasks/TASK_ID

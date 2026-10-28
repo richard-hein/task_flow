@@ -1,6 +1,9 @@
 import TaskModel from "../../database/models/task.model.js";
 import ProjectModel from "../../database/models/project.model.js";
 import MembershipModel from "../../database/models/membership.model.js";
+import CommentModel from "../../database/models/comment.model.js";
+import ActivityModel from "../../database/models/activity.model.js";
+import { logActivity } from "../activity/activity.service.js";
 import {
   BadRequestException,
   NotFoundException,
@@ -18,7 +21,7 @@ type UpdateTaskData = {
   title?: string | undefined;
   desc?: string | undefined;
   priority?: "low" | "med" | "high" | undefined;
-  assigneeId?: string | undefined;
+  assigneeId?: string | null | undefined;
   dueAt?: Date | undefined;
 };
 
@@ -44,7 +47,7 @@ export class TaskService {
     if (data.assigneeId) {
       await this.assertOrgMember(project.orgId.toString(), data.assigneeId);
     }
-    const last = await TaskModel.findOne({ projectId: pid })
+    const last = await TaskModel.findOne({ projectId: pid, status: "todo" })
       .sort({ order: -1 })
       .select("order")
       .lean();
@@ -54,6 +57,13 @@ export class TaskService {
       ...data,
       status: "todo",
       order: (last?.order ?? 0) + 1,
+    });
+    logActivity({
+      taskId: task._id.toString(),
+      orgId: project.orgId.toString(),
+      actorId: userId,
+      action: "created",
+      detail: task.title,
     });
     return { task };
   }
@@ -80,15 +90,39 @@ export class TaskService {
 
   public async updateTask(tid: string, userId: string, data: UpdateTaskData) {
     const task = await this.getTaskForUser(tid, userId);
-    if (data.assigneeId) {
-      await this.assertOrgMember(task.orgId.toString(), data.assigneeId);
+    const { assigneeId, ...rest } = data;
+    if (assigneeId) {
+      await this.assertOrgMember(task.orgId.toString(), assigneeId);
     }
+    const update: { $set: Record<string, unknown>; $unset?: Record<string, 1> } = {
+      $set: rest,
+    };
+    if (assigneeId === null) {
+      update.$unset = { assigneeId: 1 };
+    } else if (assigneeId !== undefined) {
+      update.$set.assigneeId = assigneeId;
+    }
+    const previousAssignee = task.assigneeId?.toString();
+    const assigneeChanged =
+      assigneeId !== undefined &&
+      (assigneeId === null
+        ? previousAssignee !== undefined
+        : assigneeId !== previousAssignee);
     const updated = await TaskModel.findOneAndUpdate(
       { _id: tid, orgId: task.orgId },
-      { $set: data },
+      update,
       { new: true },
     );
     if (!updated) throw new NotFoundException("Task not found");
+    if (assigneeChanged) {
+      logActivity({
+        taskId: tid,
+        orgId: task.orgId.toString(),
+        actorId: userId,
+        action: "assigned",
+        detail: assigneeId === null ? "unassigned" : `assignee:${assigneeId}`,
+      });
+    }
     return { task: updated };
   }
 
@@ -106,19 +140,30 @@ export class TaskService {
     }
     const $set: Record<string, unknown> = { status };
     if (order !== undefined) $set.order = order;
+    const previousStatus = task.status;
     const updated = await TaskModel.findOneAndUpdate(
       { _id: tid, orgId: task.orgId },
       { $set },
       { new: true },
     );
     if (!updated) throw new NotFoundException("Task not found");
+    logActivity({
+      taskId: tid,
+      orgId: task.orgId.toString(),
+      actorId: userId,
+      action: "moved",
+      detail: `${previousStatus} → ${status}`,
+    });
     return { task: updated };
   }
 
   public async deleteTask(tid: string, userId: string) {
     const task = await this.getTaskForUser(tid, userId);
+    // Children first, same reasoning as the project cascade: a crash must never leave
+    // comments/activity pointing at a task that no longer exists.
+    await CommentModel.deleteMany({ taskId: tid, orgId: task.orgId });
+    await ActivityModel.deleteMany({ taskId: tid, orgId: task.orgId });
     await TaskModel.deleteOne({ _id: tid, orgId: task.orgId });
-    // ponytail: cascade delete comments when comment.model.ts exists (Phase 4)
     return { deleted: true };
   }
 

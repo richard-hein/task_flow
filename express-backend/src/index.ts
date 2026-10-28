@@ -21,6 +21,8 @@ import {
   projectRoutes,
 } from "./modules/project/project.route.js";
 import taskRoutes from "./modules/task/task.route.js";
+import commentRoutes from "./modules/comment/comment.route.js";
+import activityRoutes from "./modules/activity/activity.route.js";
 
 const app = express();
 const BASE_PATH = config.BASE_PATH;
@@ -43,7 +45,13 @@ app.use(`${BASE_PATH}/mfa`, mfaRoutes);
 app.use(`${BASE_PATH}/orgs`, authenticateJWT, orgRoutes, orgProjectRoutes);
 app.use(`${BASE_PATH}/invites`, authenticateJWT, inviteRoutes);
 app.use(`${BASE_PATH}/projects`, authenticateJWT, projectRoutes);
-app.use(`${BASE_PATH}`, authenticateJWT, taskRoutes);
+app.use(
+  `${BASE_PATH}`,
+  authenticateJWT,
+  taskRoutes,
+  commentRoutes,
+  activityRoutes,
+);
 
 app.use(errorHandler);
 app.listen(config.PORT, async () => {

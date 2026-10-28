@@ -1,4 +1,5 @@
 import ProjectModel from "../../database/models/project.model.js";
+import TaskModel from "../../database/models/task.model.js";
 import MembershipModel from "../../database/models/membership.model.js";
 import {
   HttpException,
@@ -48,7 +49,9 @@ export class ProjectService {
 
   public async deleteProject(projectId: string, userId: string) {
     const project = await this.getProjectForUser(projectId, userId, true);
-    // ponytail: cascade delete tasks when TaskModel exists (Phase 3)
+    // Tasks first: a crash between the two leaves a project with no tasks (recoverable),
+    // never tasks pointing at a project that no longer exists.
+    await TaskModel.deleteMany({ projectId, orgId: project.orgId });
     await ProjectModel.deleteOne({ _id: projectId, orgId: project.orgId });
     return { deleted: true };
   }

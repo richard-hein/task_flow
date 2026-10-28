@@ -15,7 +15,7 @@ export const updateTaskSchema = z.object({
   title: taskTitleSchema.optional(),
   desc: taskDescSchema.optional(),
   priority: z.enum(["low", "med", "high"]).optional(),
-  assigneeId: z.string().optional(),
+  assigneeId: z.string().nullable().optional(),
   dueAt: z.coerce.date().optional(),
 });
 
